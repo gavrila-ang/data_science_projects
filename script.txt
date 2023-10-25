@@ -1,0 +1,35 @@
+# Randomly sample n sequences from the fasta file 
+reformat.sh in=new_tp2.fasta out=new_tp2_sampled.fasta samplereadstarget=n
+reformat.sh in=new_tp3.fasta out=new_tp3_sampled.fasta samplereadstarget=n
+reformat.sh in=new_tp4.fasta out=new_tp4_sampled.fasta samplereadstarget=n
+reformat.sh in=new_tp5.fasta out=new_tp5_sampled.fasta samplereadstarget=n
+reformat.sh in=new_tp6.fasta out=new_tp6_sampled.fasta samplereadstarget=n
+reformat.sh in=new_tp7.fasta out=new_tp7_sampled.fasta samplereadstarget=n 
+
+# Rename file heads to contain timepoints label
+sed '/^>/s/\s/_new_tp1 /' new_tp1.fasta > new_tp1_labelled.fasta
+sed '/^>/s/\s/_new_tp2 /' new_tp2_sampled.fasta > new_tp2_labelled.fasta
+sed '/^>/s/\s/_new_tp3 /' new_tp3_sampled.fasta > new_tp3_labelled.fasta
+sed '/^>/s/\s/_new_tp4 /' new_tp4_sampled.fasta > new_tp4_labelled.fasta
+sed '/^>/s/\s/_new_tp5 /' new_tp5_sampled.fasta > new_tp5_labelled.fasta
+sed '/^>/s/\s/_new_tp6 /' new_tp6_sampled.fasta > new_tp6_labelled.fasta
+sed '/^>/s/\s/_new_tp7 /' new_tp7_sampled.fasta > new_tp7_labelled.fasta
+
+# Check if you have n sequences in your fasta file
+grep ">" *_labelled.fasta -c
+
+# Check if you renamed sequences correctly
+grep “>” new_tp1_labelled.fasta | head -n 2 > renamed.txt
+
+# Combined labelled sequences
+cat *_labelled.fasta > combined_labelled.fasta 
+
+# Align the files
+mafft combined_labelled.fasta > combined_aligned.fasta
+
+# Construct a phylogeny
+nohup raxmlHPC -s combined_aligned.fasta -m GTRGAMMA -p 12345 -n combined_aligned
+
+# Use Figtree GUI to visualize best tree
+
+
